@@ -14,7 +14,13 @@ services:
     security_opt:
       - seccomp:unconfined
 
+    network_mode: service:mqtt
+
     volumes:
       - ..:/workspace:cached
       
     command: sleep infinity
+
+  mqtt:
+    image: eclipse-mosquitto:1.6
+    restart: unless-stopped

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="public/styles.css">
+    <link rel="stylesheet" href="{{.rootPath}}/public/styles.css">
     <title>MQTT-to-ABRP</title>
 </head>
 
@@ -14,6 +14,21 @@
     </header>
 
     <main>
+        <h2>Car</h2>
+        <p>State: {{.carState}} (Previous: {{.carPreviousState}})</p>
+
+        <form action="{{.rootPath}}/abrp-send" method="post">
+            <p>
+                <label>Send to ABRP?</label>
+                <button type="submit">{{.carAbrpSendButtonText}}</button>
+            </p>
+        </form>
+
+        <h5>TM Data</h5>
+        <pre>{{.carTmData}}</pre>
+
+        <h5>ABRP Data</h5>
+        <pre>{{.carAbrpData}}</pre>
     </main>
 </body>
 

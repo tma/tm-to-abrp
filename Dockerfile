@@ -14,6 +14,8 @@ FROM alpine:3.14
 
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /go/bin/app /app
+COPY --from=builder /go/src/app/templates /templates
+COPY --from=builder /go/src/app/public /public
 
 ENTRYPOINT /app
 EXPOSE 3000

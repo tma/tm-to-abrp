@@ -18,7 +18,8 @@
     "forwardPorts": [ 3000, 1883 ],
     "portsAttributes": {
         "3000": {
-            "label": "web"
+            "label": "web",
+            "protocol": "http"
         },
         "1883": {
             "label": "mqtt"

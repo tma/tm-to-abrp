@@ -13,9 +13,13 @@
     "extensions": [
         "ms-azuretools.vscode-docker",
         "golang.Go",
+        "rpdswtk.vsmqtt",
     ],
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
-    "forwardPorts": [ 3000, 1883 ],
+    "forwardPorts": [
+        3000,
+        1883
+    ],
     "portsAttributes": {
         "3000": {
             "label": "web",

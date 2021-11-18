@@ -17,6 +17,12 @@ services:
       - ABRP_API_KEY=xyz
 ```
 
+## Development
+
+```sh
+docker build . -t app && docker run -it --rm --network host app
+```
+
 ## Credits
 
-Heavily influenced by Python-based implementation created by @letienne: https://github.com/letienne/teslamate-abrp
+Heavily influenced by the Python-based implementation created by @letienne: [letienne/teslamate-abrp](https://github.com/letienne/teslamate-abrp)

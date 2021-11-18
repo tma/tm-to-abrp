@@ -6,16 +6,19 @@ WORKDIR /go/src/app
 COPY . .
 
 RUN go get -d -v ./...
-RUN go build -o /go/bin/app -v ./...
+RUN go build -o /go/bin/main -v ./...
 
 # ----------------
 
 FROM alpine:3.14
 
 RUN apk --no-cache add ca-certificates
-COPY --from=builder /go/bin/app /app
-COPY --from=builder /go/src/app/templates /templates
-COPY --from=builder /go/src/app/public /public
 
-ENTRYPOINT /app
+WORKDIR /app
+
+COPY --from=builder /go/bin/main /app/main
+COPY --from=builder /go/src/app/templates /app/templates
+COPY --from=builder /go/src/app/public /app/public
+
+ENTRYPOINT /app/main
 EXPOSE 3000

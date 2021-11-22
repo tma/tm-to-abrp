@@ -170,29 +170,35 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	carTmData, _ := json.MarshalIndent(car.tmData, "", "  ")
 	carAbrpData, _ := json.MarshalIndent(car.abrpData, "", "  ")
 
-	var carAbrpSendButtonText string
+	var carAbrpSendContinuousButtonText string
 	if car.abrpSendActive {
-		carAbrpSendButtonText = "Deactivate"
+		carAbrpSendContinuousButtonText = "Stop Continuous"
 	} else {
-		carAbrpSendButtonText = "Activate"
+		carAbrpSendContinuousButtonText = "Start Continuous"
 	}
 
 	indexTemplate.Execute(w, map[string]interface{}{
-		"rootPath":              rootPath,
-		"carState":              car.state,
-		"carPreviousState":      car.previousState,
-		"carTmData":             string(carTmData),
-		"carAbrpData":           string(carAbrpData),
-		"carAbrpSendButtonText": carAbrpSendButtonText,
+		"rootPath":                        rootPath,
+		"carState":                        car.state,
+		"carPreviousState":                car.previousState,
+		"carTmData":                       string(carTmData),
+		"carAbrpData":                     string(carAbrpData),
+		"carAbrpSendContinuousButtonText": carAbrpSendContinuousButtonText,
 	})
 }
 
-func abrpSendHandler(w http.ResponseWriter, r *http.Request) {
+func abrpSendContinuousHandler(w http.ResponseWriter, r *http.Request) {
 	if car.abrpSendActive {
 		abrpSendDeactivate()
 	} else {
 		abrpSendActivate()
 	}
+
+	http.Redirect(w, r, rootPath, http.StatusFound)
+}
+
+func abrpSendNowHandler(w http.ResponseWriter, r *http.Request) {
+	abrpSend()
 
 	http.Redirect(w, r, rootPath, http.StatusFound)
 }
@@ -219,7 +225,8 @@ func httpStart(port string) {
 	router.PathPrefix("/public/").Handler(publicHandler)
 	router.HandleFunc("", indexHandler)
 	router.HandleFunc("/", indexHandler)
-	router.HandleFunc("/abrp-send", abrpSendHandler).Methods("POST")
+	router.HandleFunc("/abrp-send-continuous", abrpSendContinuousHandler).Methods("POST")
+	router.HandleFunc("/abrp-send-now", abrpSendNowHandler).Methods("POST")
 
 	http.ListenAndServe(":"+port, router)
 }

@@ -17,12 +17,15 @@
         <h2>Car</h2>
         <p>State: {{.carState}} (Previous: {{.carPreviousState}})</p>
 
-        <form action="{{.rootPath}}/abrp-send" method="post">
-            <p>
-                <label>Send to ABRP?</label>
-                <button type="submit">{{.carAbrpSendButtonText}}</button>
-            </p>
-        </form>
+        <div>
+            <p style="float: left; margin-right: 10px;">Send to ABRP?</p>
+            <form action="{{.rootPath}}/abrp-send-continuous" method="post" style="float: left; margin-right: 10px;">
+                <button type="submit">{{.carAbrpSendContinuousButtonText}}</button>
+            </form>
+            <form action="{{.rootPath}}/abrp-send-now" method="post">
+                <button type="submit">Now</button>
+            </form>
+        </div>
 
         <h5>TM Data</h5>
         <pre>{{.carTmData}}</pre>

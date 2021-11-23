@@ -16,14 +16,15 @@ import (
 )
 
 type Car struct {
-	number         string
-	state          string
-	previousState  string
-	tmData         map[string]interface{}
-	abrpData       map[string]interface{}
-	abrpSendActive bool
-	abrpToken      string
-	abrpApiKey     string
+	number             string
+	state              string
+	previousState      string
+	tmData             map[string]interface{}
+	abrpData           map[string]interface{}
+	abrpSendActive     bool
+	abrpUpdatesEndTime time.Time
+	abrpToken          string
+	abrpApiKey         string
 }
 
 var car Car = Car{
@@ -172,9 +173,16 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	var carAbrpSendContinuousButtonText string
 	if car.abrpSendActive {
-		carAbrpSendContinuousButtonText = "Stop Continuous"
+		carAbrpSendContinuousButtonText = "Stop"
 	} else {
-		carAbrpSendContinuousButtonText = "Start Continuous"
+		carAbrpSendContinuousButtonText = "Start"
+	}
+
+	var carAbrpUpdatesEndTimeString string
+	if car.abrpUpdatesEndTime.IsZero() {
+		carAbrpUpdatesEndTimeString = ""
+	} else {
+		carAbrpUpdatesEndTimeString = car.abrpUpdatesEndTime.Format("2006-01-02T15:04")
 	}
 
 	indexTemplate.Execute(w, map[string]interface{}{
@@ -183,6 +191,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		"carPreviousState":                car.previousState,
 		"carTmData":                       string(carTmData),
 		"carAbrpData":                     string(carAbrpData),
+		"carAbrpUpdatesEndTimeString":     carAbrpUpdatesEndTimeString,
 		"carAbrpSendContinuousButtonText": carAbrpSendContinuousButtonText,
 	})
 }
@@ -191,7 +200,15 @@ func abrpSendContinuousHandler(w http.ResponseWriter, r *http.Request) {
 	if car.abrpSendActive {
 		abrpSendDeactivate()
 	} else {
-		abrpSendActivate()
+		endTimeString := r.FormValue("endtime")
+
+		var endTime time.Time
+		if endTimeString != "" {
+			location, _ := time.LoadLocation("Europe/Berlin") // TODO make configurable
+			endTime, _ = time.ParseInLocation("2006-01-02T15:04", endTimeString, location)
+		}
+
+		abrpSendActivate(endTime)
 	}
 
 	http.Redirect(w, r, rootPath, http.StatusFound)
@@ -233,19 +250,20 @@ func httpStart(port string) {
 
 var abrpSendQuit = make(chan bool)
 
-func abrpSendActivate() {
+func abrpSendActivate(endTime time.Time) {
 	car.abrpSendActive = true
-	go abrpSendLoop()
+	car.abrpUpdatesEndTime = endTime
+
+	go abrpSendLoop(endTime)
 }
 
 func abrpSendDeactivate() {
-	car.abrpSendActive = false
 	abrpSendQuit <- true
 }
 
 const abrpSendInterval = 1 * time.Second
 
-func abrpSendLoop() {
+func abrpSendLoop(endTime time.Time) {
 	log.Println("Start sending to ABRP...")
 
 	timer := -1
@@ -253,11 +271,18 @@ func abrpSendLoop() {
 	for {
 		select {
 		case <-abrpSendQuit:
-			log.Println("Stop sending to ABRP...")
+			log.Println("Stop sending to ABRP (reason: manual)...")
+			abrpSendLoopStop()
 			return
 		default:
 			timer++
 			time.Sleep(abrpSendInterval)
+
+			if !endTime.IsZero() && time.Now().After(endTime) {
+				log.Println("Stop sending to ABRP (reason: time's up)...")
+				abrpSendLoopStop()
+				return
+			}
 
 			if timer%2 != 0 {
 				continue
@@ -291,6 +316,11 @@ func abrpSendLoop() {
 			car.previousState = car.state
 		}
 	}
+}
+
+func abrpSendLoopStop() {
+	car.abrpSendActive = false
+	car.abrpUpdatesEndTime = time.Time{}
 }
 
 const abrpUrl = "https://api.iternio.com/1/tlm/send"

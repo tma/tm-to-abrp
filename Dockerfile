@@ -12,7 +12,7 @@ RUN go build -o /go/bin/main -v ./...
 
 FROM alpine:3.14
 
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates tzdata
 
 WORKDIR /app
 

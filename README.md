@@ -1,4 +1,4 @@
-# MQTT-to-ABRP
+# TM-to-ABRP
 
 ## Usage
 
@@ -7,7 +7,7 @@ version: "3"
 
 services:
   app:
-    build: /path/to/mqtt-to-abrp-repo
+    build: /path/to/tm-to-abrp-repo
     environment:
       - PATH_PREFIX=/abrp # optional, default is /
       - TZ=Europe/Berlin # set timezone

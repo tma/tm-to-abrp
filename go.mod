@@ -1,4 +1,4 @@
-module tma/mqtt-to-abrp
+module tma/tm-to-abrp
 
 go 1.17
 

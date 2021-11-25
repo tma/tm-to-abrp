@@ -55,7 +55,7 @@ var car Car = Car{
 func mqttSubscribe(mqttAddress string) {
 	log.Println("Connecting to MQTT server on " + mqttAddress)
 
-	opts := mqtt.NewClientOptions().AddBroker(mqttAddress).SetClientID("mqtt-to-abrp")
+	opts := mqtt.NewClientOptions().AddBroker(mqttAddress).SetClientID("tm-to-abrp")
 
 	client := mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {

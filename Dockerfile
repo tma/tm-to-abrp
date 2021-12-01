@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine3.14 AS builder
+FROM golang:1.17-alpine3.15 AS builder
 
 RUN apk add --no-cache git
 
@@ -10,7 +10,7 @@ RUN go build -o /go/bin/main -v ./...
 
 # ----------------
 
-FROM alpine:3.14
+FROM alpine:3.15.0
 
 RUN apk --no-cache add ca-certificates tzdata
 

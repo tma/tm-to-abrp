@@ -46,11 +46,11 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       # Setup Qemu
-      - name: setup qemu
+      - name: Setup Qemu
         uses: docker/setup-qemu-action@v1
 
       # Setup Buildx
-      - name: setup buildx
+      - name: Setup Docker buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
         

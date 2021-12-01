@@ -1,4 +1,4 @@
-module tma/tm-to-abrp
+module tm-to-abrp
 
 go 1.17
 

@@ -206,7 +206,7 @@ func abrpSendContinuousHandler(w http.ResponseWriter, r *http.Request) {
 
 		var endTime time.Time
 		if endTimeString != "" {
-			location, _ := time.LoadLocation("Europe/Berlin") // TODO make configurable
+			location, _ := time.LoadLocation(os.Getenv("TZ"))
 			endTime, _ = time.ParseInLocation("2006-01-02T15:04", endTimeString, location)
 		}
 

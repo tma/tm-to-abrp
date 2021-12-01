@@ -370,6 +370,18 @@ func main() {
 		mqttAddress = "tcp://localhost:1883"
 	}
 
+	if os.Getenv("TZ") == "" {
+		panic("TZ environment variable not set")
+	}
+
+	if os.Getenv("ABRP_TOKEN") == "" {
+		panic("ABRP_TOKEN environment variable not set")
+	}
+
+	if os.Getenv("ABRP_API_KEY") == "" {
+		panic("ABRP_API_KEY environment variable not set")
+	}
+
 	carNumber := os.Getenv("TM_CAR_NUMBER")
 	if carNumber == "" {
 		carNumber = "1"

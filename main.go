@@ -55,7 +55,7 @@ var car Car = Car{
 func mqttSubscribe(mqttAddress string) {
 	log.Println("Connecting to MQTT server on " + mqttAddress)
 
-	opts := mqtt.NewClientOptions().AddBroker(mqttAddress).SetClientID("tm-to-abrp")
+	opts := mqtt.NewClientOptions().AddBroker(mqttAddress).SetClientID("tm-to-abrp-car" + car.number)
 
 	client := mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
@@ -65,6 +65,8 @@ func mqttSubscribe(mqttAddress string) {
 	if token := client.Subscribe("teslamate/cars/"+car.number+"/#", 0, mqttCarMessage); token.Wait() && token.Error() != nil {
 		panic(token.Error())
 	}
+
+	log.Println("Listening for updates of car number " + car.number)
 }
 
 var mqttCarMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {

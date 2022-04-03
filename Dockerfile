@@ -6,7 +6,7 @@ WORKDIR /go/src/app
 COPY . .
 
 RUN go get -d -v ./...
-RUN go build -o /go/bin/main -v ./...
+RUN go build -o /go/bin/main -v cmd/main.go
 
 # ----------------
 
@@ -17,8 +17,8 @@ RUN apk --no-cache add ca-certificates tzdata
 WORKDIR /app
 
 COPY --from=builder /go/bin/main /app/main
-COPY --from=builder /go/src/app/templates /app/templates
-COPY --from=builder /go/src/app/public /app/public
+COPY --from=builder /go/src/app/web/templates /app/web/templates
+COPY --from=builder /go/src/app/web/public /app/web/public
 
 ENTRYPOINT /app/main
 EXPOSE 3000

@@ -16,9 +16,8 @@ RUN apk --no-cache add ca-certificates tzdata
 
 WORKDIR /app
 
-COPY --from=builder /go/bin/main /app/main
-COPY --from=builder /go/src/app/web/templates /app/web/templates
-COPY --from=builder /go/src/app/web/public /app/web/public
+COPY --from=builder /go/bin/main /app/cmd/main
+COPY --from=builder /go/src/app/web /app/web
 
-ENTRYPOINT /app/main
+ENTRYPOINT /app/cmd/main
 EXPOSE 3000

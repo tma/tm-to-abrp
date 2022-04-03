@@ -79,7 +79,7 @@ func WebStart(port string, car Car) {
 
 	router := mux.NewRouter()
 
-	fs := http.FileServer(http.Dir("public"))
+	fs := http.FileServer(http.Dir("web/public"))
 	publicHandler := http.StripPrefix("/public/", fs)
 
 	pathPrefix := os.Getenv("PATH_PREFIX")

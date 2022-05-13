@@ -7,7 +7,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-func MessagesSubscribe(mqttAddress string, car Car) {
+func MessagesSubscribe(mqttAddress string, car *Car) {
 	log.Println("Connecting to MQTT server on " + mqttAddress)
 
 	opts := mqtt.NewClientOptions().AddBroker(mqttAddress).SetClientID("tm-to-abrp-car" + car.number)

@@ -49,11 +49,11 @@ func NewCar(number string, carModel string, abrpToken string, abrpApiKey string)
 	}
 }
 
-func updateCarTmData(car Car, topic string, payload string) {
+func updateCarTmData(car *Car, topic string, payload string) {
 	car.tmData[topic] = payload
 }
 
-func updateCarAbrpData(car Car, topic string, payload string) {
+func updateCarAbrpData(car *Car, topic string, payload string) {
 	switch topic {
 	case "latitude":
 		car.abrpData["lat"] = payload

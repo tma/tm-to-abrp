@@ -13,7 +13,7 @@ import (
 
 var indexTemplate = template.Must(template.ParseFiles("web/templates/index.html"))
 
-func indexHandler(car Car) http.HandlerFunc {
+func indexHandler(car *Car) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		carTmData, _ := json.MarshalIndent(car.tmData, "", "  ")
 		carAbrpData, _ := json.MarshalIndent(car.abrpData, "", "  ")
@@ -44,7 +44,7 @@ func indexHandler(car Car) http.HandlerFunc {
 	}
 }
 
-func abrpSendContinuousHandler(car Car) http.HandlerFunc {
+func abrpSendContinuousHandler(car *Car) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if car.abrpSendActive {
 			abrpSendDeactivate()
@@ -64,7 +64,7 @@ func abrpSendContinuousHandler(car Car) http.HandlerFunc {
 	}
 }
 
-func abrpSendNowHandler(car Car) http.HandlerFunc {
+func abrpSendNowHandler(car *Car) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		abrpSend(car)
 
@@ -74,7 +74,7 @@ func abrpSendNowHandler(car Car) http.HandlerFunc {
 
 var rootPath string
 
-func WebStart(port string, car Car) {
+func WebStart(port string, car *Car) {
 	log.Println("Starting HTTP server on port " + port)
 
 	router := mux.NewRouter()

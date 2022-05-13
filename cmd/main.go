@@ -40,6 +40,6 @@ func main() {
 		os.Getenv("ABRP_API_KEY"),
 	)
 
-	app.MessagesSubscribe(mqttAddress, car)
-	app.WebStart(port, car)
+	app.MessagesSubscribe(mqttAddress, &car)
+	app.WebStart(port, &car)
 }

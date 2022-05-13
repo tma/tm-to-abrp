@@ -10,7 +10,7 @@ import (
 
 var abrpSendQuit = make(chan bool)
 
-func abrpSendActivate(car Car, endTime time.Time) {
+func abrpSendActivate(car *Car, endTime time.Time) {
 	car.abrpSendActive = true
 	car.abrpUpdatesEndTime = endTime
 
@@ -23,7 +23,7 @@ func abrpSendDeactivate() {
 
 const abrpSendInterval = 1 * time.Second
 
-func abrpSendLoop(car Car, endTime time.Time) {
+func abrpSendLoop(car *Car, endTime time.Time) {
 	log.Println("Start sending to ABRP...")
 
 	timer := -1
@@ -78,14 +78,14 @@ func abrpSendLoop(car Car, endTime time.Time) {
 	}
 }
 
-func abrpSendLoopStop(car Car) {
+func abrpSendLoopStop(car *Car) {
 	car.abrpSendActive = false
 	car.abrpUpdatesEndTime = time.Time{}
 }
 
 const abrpUrl = "https://api.iternio.com/1/tlm/send"
 
-func abrpSend(car Car) {
+func abrpSend(car *Car) {
 	log.Println("Sending to ABRP...")
 
 	data, error := json.Marshal(map[string]interface{}{"tlm": car.abrpData})

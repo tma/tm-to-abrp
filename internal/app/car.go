@@ -72,7 +72,7 @@ func updateCarAbrpData(car *Car, topic string, payload string) {
 	case "ideal_battery_range_km":
 		car.abrpData["ideal_battery_range"] = payload
 	case "est_battery_range_km":
-		car.abrpData["battery_range"] = payload
+		car.abrpData["est_battery_range"] = payload
 	case "usable_battery_level":
 		car.abrpData["soc"] = payload
 	case "charge_energy_added":

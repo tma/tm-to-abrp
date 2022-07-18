@@ -44,33 +44,27 @@ func abrpSendLoop(car *Car, endTime time.Time) {
 				return
 			}
 
-			if timer%2 != 0 {
-				continue
-			}
-
 			if car.state != car.previousState {
-				timer = 600
+				timer = 30
 			}
 
 			car.abrpData["utc"] = int(time.Now().UTC().Unix())
 
 			if car.state == "parked" || car.state == "online" || car.state == "suspended" || car.state == "asleep" {
 				delete(car.abrpData, "kwh_charged")
-				if timer%600 == 0 || timer > 600 {
-					// parked, update every 10 minutes
+				if timer%30 == 0 || timer > 30 {
+					// parked, update every 30 seconds (avoid being offline for ABRP)
 					abrpSend(car)
 					timer = 0
 				}
 			} else if car.state == "charging" {
-				if timer%10 == 0 {
-					// charging, update every 10 seconds
+				if timer%4 == 0 {
+					// charging, update every 4 seconds
 					abrpSend(car)
 				}
 			} else if car.state == "driving" {
-				if timer%2 == 0 {
-					// driving, update every 2 seconds
-					abrpSend(car)
-				}
+				// driving, update every second
+				abrpSend(car)
 			}
 
 			car.previousState = car.state

@@ -34,7 +34,7 @@ func NewCar(number string, carModel string, abrpToken string, abrpApiKey string)
 			"is_charging":         0,
 			"is_dcfc":             0,
 			"is_parked":           0,
-			"battery_range":       "",
+			"est_battery_range":   "",
 			"ideal_battery_range": "",
 			"ext_temp":            "",
 			"tlm_type":            "api",

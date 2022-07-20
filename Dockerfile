@@ -10,7 +10,7 @@ RUN go build -o /go/bin/main -v cmd/main.go
 
 # ----------------
 
-FROM alpine:3.16.0
+FROM alpine:3.16
 
 RUN apk --no-cache add ca-certificates tzdata
 

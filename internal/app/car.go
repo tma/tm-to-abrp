@@ -19,35 +19,43 @@ type Car struct {
 }
 
 func NewCar(number string, carModel string, abrpToken string, abrpApiKey string) *Car {
-	return &Car{
-		number: number,
-		tmData: new(sync.Map),
-		abrpData: new(sync.Map),
-		// 	"car_model":           carModel,
-		// 	"utc":                 0,
-		// 	"soc":                 0,
-		// 	"power":               0,
-		// 	"speed":               0,
-		// 	"lat":                 "",
-		// 	"lon":                 "",
-		// 	"elevation":           "",
-		// 	"heading":             "",
-		// 	"is_charging":         0,
-		// 	"is_dcfc":             0,
-		// 	"is_parked":           0,
-		// 	"est_battery_range":   "",
-		// 	"ideal_battery_range": "",
-		// 	"ext_temp":            "",
-		// 	"tlm_type":            "api",
-		// 	"voltage":             0,
-		// 	"current":             0,
-		// 	"kwh_charged":         0,
-		// 	"odometer":            "",
-		// },
+	car := &Car{
+		number:         number,
+		tmData:         new(sync.Map),
+		abrpData:       new(sync.Map),
 		abrpSendActive: false,
 		abrpToken:      abrpToken,
 		abrpApiKey:     abrpApiKey,
 	}
+
+	abrpDataDefaults := map[string]interface{}{
+		"car_model":           carModel,
+		"utc":                 0,
+		"soc":                 0,
+		"power":               0,
+		"speed":               0,
+		"lat":                 "",
+		"lon":                 "",
+		"elevation":           "",
+		"heading":             "",
+		"is_charging":         0,
+		"is_dcfc":             0,
+		"is_parked":           0,
+		"est_battery_range":   "",
+		"ideal_battery_range": "",
+		"ext_temp":            "",
+		"tlm_type":            "api",
+		"voltage":             0,
+		"current":             0,
+		"kwh_charged":         0,
+		"odometer":            "",
+	}
+
+	for key, value := range abrpDataDefaults {
+		car.abrpData.Store(key, value)
+	}
+
+	return car
 }
 
 func updateCarTmData(car *Car, topic string, payload string) {

@@ -2,12 +2,12 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"text/template"
 	"time"
-	"fmt"
 
 	"github.com/gorilla/mux"
 )

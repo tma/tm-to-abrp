@@ -2,8 +2,8 @@ package app
 
 import (
 	"strconv"
-	"time"
 	"sync"
+	"time"
 )
 
 type Car struct {

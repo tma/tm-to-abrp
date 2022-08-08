@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,8 +16,19 @@ var indexTemplate = template.Must(template.ParseFiles("web/templates/index.html"
 
 func indexHandler(car *Car) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		carTmData, _ := json.MarshalIndent(car.tmData, "", "  ")
-		carAbrpData, _ := json.MarshalIndent(car.abrpData, "", "  ")
+		tmDataMap := map[string]interface{}{}
+		car.tmData.Range(func(key, value interface{}) bool {
+			tmDataMap[fmt.Sprint(key)] = value
+			return true
+		})
+		carTmData, _ := json.MarshalIndent(tmDataMap, "", "  ")
+
+		abrpDataMap := map[string]interface{}{}
+		car.abrpData.Range(func(key, value interface{}) bool {
+			abrpDataMap[fmt.Sprint(key)] = value
+			return true
+		})
+		carAbrpData, _ := json.MarshalIndent(abrpDataMap, "", "  ")
 
 		var carAbrpSendContinuousButtonText string
 		if car.abrpSendActive {

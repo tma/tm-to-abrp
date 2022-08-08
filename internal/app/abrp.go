@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -48,10 +49,10 @@ func abrpSendLoop(car *Car, endTime time.Time) {
 				timer = 30
 			}
 
-			car.abrpData["utc"] = int(time.Now().UTC().Unix())
+			car.abrpData.Store("utc", int(time.Now().UTC().Unix()))
 
 			if car.state == "parked" || car.state == "online" || car.state == "suspended" || car.state == "asleep" {
-				delete(car.abrpData, "kwh_charged")
+				car.abrpData.Delete("kwh_charged")
 				if timer%30 == 0 || timer > 30 {
 					// parked, update every 30 seconds (avoid being offline for ABRP)
 					abrpSend(car)
@@ -82,7 +83,13 @@ const abrpUrl = "https://api.iternio.com/1/tlm/send"
 func abrpSend(car *Car) {
 	log.Println("Sending to ABRP...")
 
-	data, error := json.Marshal(map[string]interface{}{"tlm": car.abrpData})
+	m := map[string]interface{}{}
+	car.abrpData.Range(func(key, value interface{}) bool {
+		m[fmt.Sprint(key)] = value
+		return true
+	})
+
+	data, error := json.Marshal(map[string]interface{}{"tlm": m})
 	if error != nil {
 		log.Println("Error marshalling data: " + error.Error())
 		return

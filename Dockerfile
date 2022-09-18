@@ -1,11 +1,11 @@
 FROM golang:1.19.1-alpine3.16 AS builder
 
-ARG BUILD_OS=${TARGETOS:-linux}
-ARG BUILD_ARCH=${TARGETARCH:-amd64}
+ARG TARGETOS
+ARG TARGETARCH
 
 RUN apk update && \
-  apk add --no-cache git ca-certificates tzdata && \
-  update-ca-certificates
+    apk add --no-cache git ca-certificates tzdata && \
+    update-ca-certificates
 
 ENV USER=application
 ENV UID=10001
@@ -25,7 +25,7 @@ COPY . .
 RUN go mod download
 RUN go mod verify
 
-RUN GOOS=$BUILD_OS GOARCH=$BUILD_ARCH go build -ldflags="-w -s" -o /go/bin/main -v cmd/main.go
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags="-w -s" -o /go/bin/main -v cmd/main.go
 
 # ----------------
 

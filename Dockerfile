@@ -33,8 +33,6 @@ FROM scratch
 
 USER application:application
 
-WORKDIR /app
-
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /etc/passwd /etc/passwd

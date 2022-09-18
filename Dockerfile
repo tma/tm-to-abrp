@@ -1,10 +1,10 @@
-FROM golang:1.19.1-alpine3.16 AS builder
+FROM golang:1.19.1-bullseye AS builder
 
 ARG TARGETOS
 ARG TARGETARCH
 
-RUN apk update && \
-    apk add --no-cache git ca-certificates tzdata && \
+RUN apt-get update && \
+    apt-get install git ca-certificates tzdata && \
     update-ca-certificates
 
 ENV USER=application
@@ -19,13 +19,15 @@ RUN adduser \
     --uid "${UID}" \
     "${USER}"
 
-WORKDIR /go/src/app
+WORKDIR $GOPATH/src/app
+
+COPY go.mod .
+RUN go mod download && go mod verify
+
 COPY . .
-
-RUN go mod download
-RUN go mod verify
-
-RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags="-w -s" -o /go/bin/main -v cmd/main.go
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
+    -ldflags="-w -s" -a -installsuffix cgo \
+    -o /go/bin/main -v cmd/main.go
 
 # ----------------
 
@@ -41,5 +43,7 @@ COPY --from=builder /etc/group /etc/group
 COPY --from=builder /go/bin/main /app/cmd/main
 COPY --from=builder /go/src/app/web /app/web
 
-ENTRYPOINT /app/cmd/main
+WORKDIR /app
+
+ENTRYPOINT [ "/app/cmd/main" ]
 EXPOSE 3000

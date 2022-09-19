@@ -30,7 +30,7 @@ jobs:
 
       - name: Set build type
         run: |
-          if $GITHUB_EVENT_TYPE == 'pull_request'; then
+          if [ $GITHUB_EVENT_TYPE = 'pull_request' ]; then
             echo "BUILD_TYPE=test" >> $GITHUB_ENV
           else
             echo "BUILD_TYPE=release" >> $GITHUB_ENV

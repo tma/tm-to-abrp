@@ -1,7 +1,6 @@
-ARG TARGETOS
-ARG TARGETARCH
+FROM --platform=$BUILDPLATFORM golang:1.19.1-bullseye AS builder-base
 
-FROM golang:1.19.1-bullseye AS builder-base
+ARG TARGETOS TARGETARCH
 
 RUN apt-get update && \
     apt-get install git ca-certificates tzdata && \
@@ -30,14 +29,22 @@ COPY . .
 
 FROM builder-base AS builder-test
 
-RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
+RUN --mount=target=. \
+    --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg \
+    GOOS=$TARGETOS GOARCH=$TARGETARCH \
+    go build \
     -o /go/bin/main -v cmd/main.go
 
 # ----------------
 
 FROM builder-base AS builder-release
 
-RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
+RUN --mount=target=. \
+    --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg \
+    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
+    go build \
     -ldflags="-w -s" -a -installsuffix cgo \
     -o /go/bin/main -v cmd/main.go
 

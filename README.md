@@ -27,7 +27,7 @@ services:
 Use Codespaces on GitHub. To build and run the application using Docker, do this:
 
 ```sh
-docker build . -t app && docker run -it --rm --network host app
+DOCKER_BUILDKIT=1 docker build . -t app --target test && docker run -it --rm --network host app
 ```
 
 ## Credits

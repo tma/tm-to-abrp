@@ -1,7 +1,7 @@
-FROM golang:1.19.1-bullseye AS builder
-
 ARG TARGETOS
 ARG TARGETARCH
+
+FROM golang:1.19.1-bullseye AS builder-base
 
 RUN apt-get update && \
     apt-get install git ca-certificates tzdata && \
@@ -25,25 +25,54 @@ COPY go.mod .
 RUN go mod download && go mod verify
 
 COPY . .
+
+# ----------------
+
+FROM builder-base AS builder-test
+
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
+    -o /go/bin/main -v cmd/main.go
+
+# ----------------
+
+FROM builder-base AS builder-release
+
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
     -ldflags="-w -s" -a -installsuffix cgo \
     -o /go/bin/main -v cmd/main.go
 
 # ----------------
 
-FROM scratch
+FROM scratch AS base
 
-USER application:application
+COPY --from=builder-base /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=builder-base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder-base /etc/passwd /etc/passwd
+COPY --from=builder-base /etc/group /etc/group
 
-COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /etc/group /etc/group
+COPY --from=builder-base /go/src/app/web /app/web
 
-COPY --from=builder /go/bin/main /app/cmd/main
-COPY --from=builder /go/src/app/web /app/web
+# ----------------
+
+FROM base AS release
+
+COPY --from=builder-release /go/bin/main /app/cmd/main
 
 WORKDIR /app
-
 ENTRYPOINT [ "/app/cmd/main" ]
 EXPOSE 3000
+
+# ----------------
+
+FROM debian:bullseye AS test
+
+COPY --from=base / /
+COPY --from=builder-test /go/bin/main /app/cmd/main
+
+WORKDIR /app
+ENTRYPOINT [ "/app/cmd/main" ]
+EXPOSE 3000
+
+# ---------------- default target
+
+FROM test

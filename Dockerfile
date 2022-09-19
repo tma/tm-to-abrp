@@ -29,10 +29,7 @@ COPY . .
 
 FROM builder-base AS builder-test
 
-RUN --mount=target=. \
-    --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=cache,target=/go/pkg \
-    GOOS=$TARGETOS GOARCH=$TARGETARCH \
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH \
     go build \
     -o /go/bin/main -v cmd/main.go
 

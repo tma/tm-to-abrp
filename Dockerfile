@@ -2,8 +2,8 @@ FROM --platform=$BUILDPLATFORM golang:1.19.1-bullseye AS builder-base
 
 ARG TARGETOS TARGETARCH
 
-RUN apt-get update && \
-    apt-get install git ca-certificates tzdata && \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y git ca-certificates tzdata && \
     update-ca-certificates
 
 ENV USER=application

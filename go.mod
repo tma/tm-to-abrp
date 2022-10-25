@@ -3,7 +3,7 @@ module tm-to-abrp
 go 1.17
 
 require (
-	github.com/eclipse/paho.mqtt.golang v1.4.1
+	github.com/eclipse/paho.mqtt.golang v1.4.2
 	github.com/gorilla/mux v1.8.0
 )
 

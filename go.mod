@@ -1,6 +1,6 @@
 module tm-to-abrp
 
-go 1.17
+go 1.22
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.3

@@ -1,5 +1,5 @@
 ARG VARIANT=1
-FROM mcr.microsoft.com/vscode/devcontainers/go:0-${VARIANT}
+FROM mcr.microsoft.com/vscode/devcontainers/go:1-${VARIANT}
 
 # [Option] Install zsh
 ARG INSTALL_ZSH="true"
@@ -22,11 +22,11 @@ RUN apt-get update \
     && /bin/bash /tmp/library-scripts/docker-in-docker-debian.sh "${ENABLE_NONROOT_DOCKER}" "${USERNAME}" "${USE_MOBY}" \
     # Clean up
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
-    
+
 VOLUME [ "/var/lib/docker" ]
 
-# Setting the ENTRYPOINT to docker-init.sh will start up the Docker Engine 
-# inside the container "overrideCommand": false is set in devcontainer.json. 
+# Setting the ENTRYPOINT to docker-init.sh will start up the Docker Engine
+# inside the container "overrideCommand": false is set in devcontainer.json.
 # The script will also execute CMD if you need to alter startup behaviors.
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]

@@ -20,6 +20,7 @@ services:
       - ABRP_CAR_MODEL=xyz # check values via https://api.iternio.com/1/tlm/get_carmodels_list
       - ABRP_TOKEN=xyz # car token
       - ABRP_API_KEY=xyz
+      - ABRP_SEND_INDEFINITELY=1 # optional, default is false
 ```
 
 ## Development

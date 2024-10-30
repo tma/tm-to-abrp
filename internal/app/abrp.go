@@ -6,16 +6,25 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 var abrpSendQuit = make(chan bool)
 
+func areWeSendingIndefinitely() bool {
+	return os.Getenv("ABRP_SEND_INDEFINITELY") == "1"
+}
+
 func abrpSendActivate(car *Car, endTime time.Time) {
 	car.abrpSendActive = true
 	car.abrpUpdatesEndTime = endTime
 
-	go abrpSendLoop(car, endTime)
+	if areWeSendingIndefinitely() {
+		go abrpSendLoop(car, time.Time{})
+	} else {
+		go abrpSendLoop(car, endTime)
+	}
 }
 
 func abrpSendDeactivate() {
@@ -39,7 +48,7 @@ func abrpSendLoop(car *Car, endTime time.Time) {
 			timer++
 			time.Sleep(abrpSendInterval)
 
-			if !endTime.IsZero() && time.Now().After(endTime) {
+			if !areWeSendingIndefinitely() && !endTime.IsZero() && time.Now().After(endTime) {
 				log.Println("Stop sending to ABRP (reason: time's up)...")
 				abrpSendLoopStop(car)
 				return

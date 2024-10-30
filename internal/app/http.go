@@ -52,6 +52,7 @@ func indexHandler(car *Car) http.HandlerFunc {
 			"carAbrpData":                     string(carAbrpData),
 			"carAbrpUpdatesEndTimeString":     carAbrpUpdatesEndTimeString,
 			"carAbrpSendContinuousButtonText": carAbrpSendContinuousButtonText,
+			"areWeSendingIndefinitely":        areWeSendingIndefinitely(),
 		})
 	}
 }
@@ -69,7 +70,11 @@ func abrpSendContinuousHandler(car *Car) http.HandlerFunc {
 				endTime, _ = time.ParseInLocation("2006-01-02T15:04", endTimeString, location)
 			}
 
-			abrpSendActivate(car, endTime)
+			if areWeSendingIndefinitely() {
+				abrpSendActivate(car, time.Time{})
+			} else {
+				abrpSendActivate(car, endTime)
+			}
 		}
 
 		http.Redirect(w, r, rootPath, http.StatusFound)

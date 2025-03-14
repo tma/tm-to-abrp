@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 	"tm-to-abrp/internal/app"
 )
 
@@ -14,6 +15,31 @@ func main() {
 	mqttAddress := os.Getenv("MQTT")
 	if mqttAddress == "" {
 		mqttAddress = "tcp://localhost:1883"
+	}
+
+	// Get MQTT credentials
+	mqttUsername := os.Getenv("MQTT_USERNAME")
+	mqttPassword := os.Getenv("MQTT_PASSWORD")
+
+	// Get TLS settings
+	mqttUseTLS := false
+	useTLSStr := os.Getenv("MQTT_TLS")
+	if useTLSStr != "" {
+		var err error
+		mqttUseTLS, err = strconv.ParseBool(useTLSStr)
+		if err != nil {
+			mqttUseTLS = false
+		}
+	}
+
+	mqttTlsSkipVerify := false
+	tlsSkipStr := os.Getenv("MQTT_TLS_SKIP_VERIFY")
+	if tlsSkipStr != "" {
+		var err error
+		mqttTlsSkipVerify, err = strconv.ParseBool(tlsSkipStr)
+		if err != nil {
+			mqttTlsSkipVerify = false
+		}
 	}
 
 	if os.Getenv("TZ") == "" {
@@ -40,6 +66,6 @@ func main() {
 		os.Getenv("ABRP_API_KEY"),
 	)
 
-	app.MessagesSubscribe(mqttAddress, &car)
+	app.MessagesSubscribe(mqttAddress, mqttUsername, mqttPassword, mqttUseTLS, mqttTlsSkipVerify, &car)
 	app.WebStart(port, &car)
 }

@@ -1,16 +1,33 @@
 package app
 
 import (
+	"crypto/tls"
 	"log"
 	"strings"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-func MessagesSubscribe(mqttAddress string, car *Car) {
+func MessagesSubscribe(mqttAddress string, username string, password string, useTLS bool, tlsSkipVerify bool, car *Car) {
 	log.Println("Connecting to MQTT server on " + mqttAddress)
 
 	opts := mqtt.NewClientOptions().AddBroker(mqttAddress).SetClientID("tm-to-abrp-car" + car.number)
+
+	// Add username and password if provided
+	if username != "" {
+		opts.SetUsername(username)
+		if password != "" {
+			opts.SetPassword(password)
+		}
+	}
+
+	// Configure TLS if needed
+	if useTLS {
+		tlsConfig := &tls.Config{
+			InsecureSkipVerify: tlsSkipVerify,
+		}
+		opts.SetTLSConfig(tlsConfig)
+	}
 
 	client := mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {

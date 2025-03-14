@@ -16,6 +16,10 @@ services:
       - PATH_PREFIX=/abrp # optional, default is /
       - TZ=Europe/Berlin # set timezone
       - MQTT=tcp://localhost:1883 # mqtt URL
+      - MQTT_USERNAME=username # optional, MQTT username
+      - MQTT_PASSWORD=password # optional, MQTT password
+      - MQTT_TLS=false # optional, set to true to enable TLS
+      - MQTT_TLS_SKIP_VERIFY=false # optional, set to true to skip TLS certificate verification
       - TM_CAR_NUMBER=1 # teslamate car number
       - ABRP_CAR_MODEL=xyz # check values via https://api.iternio.com/1/tlm/get_carmodels_list
       - ABRP_TOKEN=xyz # car token
